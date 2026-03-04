@@ -587,9 +587,37 @@
                 justify-content: flex-start;
             }
         }
+        /* Hide header and nav when body has .hide-ui */
+        body.hide-ui header,
+        body.hide-ui nav {
+            display: none !important;
+        }
+
+        /* Menu toggle button (hidden by default) */
+        #menuToggle {
+            display: none;
+            position: fixed;
+            top: 12px;
+            left: 12px;
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 8px 10px;
+            border-radius: 8px;
+            font-size: 18px;
+            z-index: 2001;
+            cursor: pointer;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+        }
+
+        /* Show menu toggle when UI is hidden */
+        body.hide-ui #menuToggle {
+            display: block;
+        }
     </style>
 </head>
 <body>
+    <button id="menuToggle" aria-label="Open menu" title="Open menu">☰</button>
     <header>
         <div class="header-content">
             <div class="logo-section">
@@ -798,6 +826,11 @@
     </footer>
 
     <script>
+        // Menu toggle to reveal header/nav when hidden
+        const menuToggle = document.getElementById('menuToggle');
+        menuToggle.addEventListener('click', () => {
+            document.body.classList.remove('hide-ui');
+        });
         // Simple password protection (in production, use proper authentication)
         const WORKER_PASSWORD = 'woodshop2026';
         const TAX_RATE = 0.06; // 6% sales tax
@@ -822,6 +855,9 @@
             
             // Add active class to clicked button
             event.target.classList.add('active');
+
+            // Hide header and nav for a cleaner view; user can reopen with the menu button
+            document.body.classList.add('hide-ui');
         }
 
         function checkPassword() {
