@@ -587,10 +587,20 @@
                 justify-content: flex-start;
             }
         }
-        /* Hide header and nav when body has .hide-ui */
+        /* Animate header and nav when hiding/showing the UI */
+        header, nav {
+            transition: transform 0.35s ease, opacity 0.35s ease;
+            transform-origin: top center;
+            will-change: transform, opacity;
+        }
+
+        /* When .hide-ui is present, move header/nav up and fade out */
         body.hide-ui header,
         body.hide-ui nav {
-            display: none !important;
+            opacity: 0;
+            transform: translateY(-14px);
+            pointer-events: none;
+            visibility: hidden;
         }
 
         /* Menu toggle button (hidden by default) */
@@ -615,7 +625,7 @@
             gap: 8px;
         }
 
-        /* Show menu toggle when UI is hidden */
+        /* Show menu toggle when UI is hidden (we also trigger via JS after animation) */
         body.hide-ui #menuToggle {
             display: inline-flex;
         }
@@ -832,16 +842,31 @@
 
     <script>
         // Menu toggle controls: show menu (header/nav) and hide the toggle button,
-        // or show the toggle when the UI is hidden.
+        // or show the toggle when the UI is hidden. Animate appearance/disappearance.
         const menuToggle = document.getElementById('menuToggle');
+        const headerEl = document.querySelector('header');
+        const navEl = document.querySelector('nav');
+        const ANIM_MS = 360; // match CSS transition (ms)
+
         function showMenu() {
+            // Reveal header/nav with CSS transition
             document.body.classList.remove('hide-ui');
-            menuToggle.style.display = 'none';
+            // Wait for animation to finish, then hide the toggle button
+            setTimeout(() => {
+                menuToggle.style.display = 'none';
+                // ensure header/nav are visible to assist accessibility
+                headerEl.style.visibility = 'visible';
+                navEl.style.visibility = 'visible';
+            }, ANIM_MS);
         }
 
         function showNavHidden() {
+            // Hide header/nav with transition; show toggle after animation completes
             document.body.classList.add('hide-ui');
-            menuToggle.style.display = 'inline-flex';
+            // After transition completes, show menu toggle
+            setTimeout(() => {
+                menuToggle.style.display = 'inline-flex';
+            }, ANIM_MS);
         }
 
         // Initialize toggle visibility based on current UI state
