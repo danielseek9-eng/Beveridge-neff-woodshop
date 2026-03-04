@@ -831,11 +831,27 @@
     </footer>
 
     <script>
-        // Menu toggle to reveal header/nav when hidden
+        // Menu toggle controls: show menu (header/nav) and hide the toggle button,
+        // or show the toggle when the UI is hidden.
         const menuToggle = document.getElementById('menuToggle');
-        menuToggle.addEventListener('click', () => {
+        function showMenu() {
             document.body.classList.remove('hide-ui');
-        });
+            menuToggle.style.display = 'none';
+        }
+
+        function showNavHidden() {
+            document.body.classList.add('hide-ui');
+            menuToggle.style.display = 'inline-flex';
+        }
+
+        // Initialize toggle visibility based on current UI state
+        if (document.body.classList.contains('hide-ui')) {
+            menuToggle.style.display = 'inline-flex';
+        } else {
+            menuToggle.style.display = 'none';
+        }
+
+        menuToggle.addEventListener('click', showMenu);
         // Simple password protection (in production, use proper authentication)
         const WORKER_PASSWORD = 'woodshop2026';
         const TAX_RATE = 0.06; // 6% sales tax
@@ -862,7 +878,7 @@
             event.target.classList.add('active');
 
             // Hide header and nav for a cleaner view; user can reopen with the menu button
-            document.body.classList.add('hide-ui');
+            showNavHidden();
         }
 
         function checkPassword() {
